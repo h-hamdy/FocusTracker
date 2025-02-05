@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,10 +13,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { SignupSchemaType, signupSchema } from "../dto/signupSchema";
+import { z } from "zod";
+
 
 // Signup component handles user registration for the FocusTrack app
 export default function Signup() {
   const router = useRouter();
+
+  const form = useForm<SignupSchemaType>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      name: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof signupSchema>) => {
+    console.log("Form Data:", values);
+  };
 
   return (
     <div className="flex items-center justify-center h-screen w-full">
@@ -28,37 +48,55 @@ export default function Signup() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
-            <div className="flex flex-col w-full gap-4">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="name">Username</Label>
-                <Input
-                  id="username"
-                  className="placeholder:text-sm"
-                  placeholder="Enter your Username"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="name">Password</Label>
-                <Input
-                  type="password"
-                  id="password"
-                  placeholder="Enter your password"
-                  className="placeholder:text-sm"
-                />
-              </div>
-              <div className="flex flex-col gap-2 pb-2">
-                <Label htmlFor="name">Confirm Password</Label>
-                <Input
-                  type="password"
-                  id="password"
-                  placeholder="Confirm Your password"
-                  className="placeholder:text-sm"
-                />
-              </div>
-              <Button className="w-full">Sign up</Button>
-            </div>
-          </form>
+		<Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col w-full gap-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <Label htmlFor="username">Username</Label>
+              <FormControl>
+                <Input {...field} id="username" placeholder="Enter your username" className="placeholder:text-sm" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <Label htmlFor="password">Password</Label>
+              <FormControl>
+                <Input {...field} id="password" type="password" placeholder="Enter your password" className="placeholder:text-sm" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <FormControl>
+                <Input {...field} id="confirmPassword" type="password" placeholder="Confirm your password" className="placeholder:text-sm" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" className="w-full">
+          Sign Up
+        </Button>
+      </form>
+    </Form>
         </CardContent>
         <CardFooter className="flex items-center justify-center">
           <p className="text-sm text-muted-foreground">

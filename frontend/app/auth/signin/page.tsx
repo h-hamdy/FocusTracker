@@ -13,10 +13,27 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { SigninSchemaType, signinSchema } from "../dto/signinSchema";
+import { z } from "zod";
 
 // SignIn component handles user login for the FocusTrack app
 export default function Signin() {
   const router = useRouter();
+
+  const form = useForm<SigninSchemaType>({
+    resolver: zodResolver(signinSchema),
+    defaultValues: {
+      name: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof signinSchema>) => {
+    console.log("Form Data:", values);
+  };
 
   return (
     <div className="flex items-center justify-center h-screen w-full">
@@ -28,23 +45,41 @@ export default function Signin() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
-            <div className="flex flex-col w-full gap-4">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="name">Username</Label>
-                <Input id="username" placeholder="Enter your Username" />
-              </div>
-              <div className="flex flex-col gap-2 pb-2">
-                <Label htmlFor="name">Password</Label>
-                <Input
-                  type="password"
-                  id="password"
-                  placeholder="Enter your password"
-                />
-              </div>
-              <Button className="w-full">Sign in</Button>
-            </div>
-          </form>
+		<Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col w-full gap-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <Label htmlFor="name">Username</Label>
+              <FormControl>
+                <Input {...field} id="name" placeholder="Enter your Username" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <Label htmlFor="password">Password</Label>
+              <FormControl>
+                <Input {...field} id="password" type="password" placeholder="Enter your password" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button  type="submit" className="w-full">
+          Sign in
+        </Button>
+      </form>
+    </Form>
         </CardContent>
         <CardFooter className="flex items-center justify-center">
           <p className="text-sm text-muted-foreground">
