@@ -2,7 +2,7 @@ import * as z from "zod";
 
 export const signinSchema = z
   .object({
-    name: z.string().min(2, {
+    username: z.string().min(2, {
       message: "Enter a valid Username",
     }),
     password: z.string().min(8, {

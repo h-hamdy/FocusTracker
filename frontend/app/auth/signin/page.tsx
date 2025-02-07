@@ -18,6 +18,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { SigninSchemaType, signinSchema } from "../dto/signinSchema";
 import { z } from "zod";
+import axios from "axios";
+
+
 
 // SignIn component handles user login for the FocusTrack app
 export default function Signin() {
@@ -26,13 +29,20 @@ export default function Signin() {
   const form = useForm<SigninSchemaType>({
     resolver: zodResolver(signinSchema),
     defaultValues: {
-      name: "",
+	username: "",
       password: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof signinSchema>) => {
-    console.log("Form Data:", values);
+  const onSubmit = async (values: z.infer<typeof signinSchema>) => {
+	console.log(values)
+    try {
+		await axios.post("http://localhost:3001/auth/signin", values, {withCredentials: true});
+		router.push("/")
+	}
+	catch (error) {
+		console.log(error);
+	}
   };
 
   return (
@@ -49,12 +59,12 @@ export default function Signin() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col w-full gap-4">
         <FormField
           control={form.control}
-          name="name"
+          name="username"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="name">Username</Label>
+              <Label htmlFor="username">Username</Label>
               <FormControl>
-                <Input {...field} id="name" placeholder="Enter your Username" />
+                <Input {...field} id="username" placeholder="Enter your Username" />
               </FormControl>
               <FormMessage />
             </FormItem>

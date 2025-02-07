@@ -8,12 +8,14 @@ export class AuthController {
 
 	@Post("signup")
 	async signup(@Body() dto: AuthDtoSignup) {
+		console.log(dto)
 		return this.authService.signup(dto);
 	}
 
 	@Post("signin")
 	async signin(@Body() dto: AuthDtoSignin, @Res({ passthrough: true }) response: Response) {
 		const token = await this.authService.signin(dto);
+		console.log(token);
 		(response as any).cookie('jwt', token, {
 			httpOnly: true,
 		});
