@@ -1,10 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -12,34 +12,31 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { SignupSchemaType, signupSchema } from "../dto/signupSchema";
+import { SigninSchemaType, signinSchema } from "../dto/signinSchema";
 import { z } from "zod";
 import axios from "axios";
 
-import { useRouter } from "next/navigation";
-
-// Signup component handles user registration for the FocusTrack app
-export default function Signup() {
+// SignIn component handles user login for the FocusTrack app
+export default function Signin() {
   const router = useRouter();
 
-  const form = useForm<SignupSchemaType>({
-    resolver: zodResolver(signupSchema),
+  const form = useForm<SigninSchemaType>({
+    resolver: zodResolver(signinSchema),
     defaultValues: {
       username: "",
       password: "",
-      confirmationPassword: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof signupSchema>) => {
+  const onSubmit = async (values: z.infer<typeof signinSchema>) => {
+    console.log(values);
     try {
-      await axios.post("http://localhost:3001/auth/signup", values, {
+      await axios.post("http://localhost:3001/auth/signin", values, {
         withCredentials: true,
       });
-      router.push("/auth/signin");
+      router.push("/");
     } catch (error) {
       console.log(error);
     }
@@ -71,8 +68,7 @@ export default function Signup() {
                         <Input
                           {...field}
                           id="username"
-                          placeholder="Enter your username"
-                          className="placeholder:text-sm"
+                          placeholder="Enter your Username"
                         />
                       </FormControl>
                       <FormMessage />
@@ -92,29 +88,6 @@ export default function Signup() {
                           id="password"
                           type="password"
                           placeholder="Enter your password"
-                          className="placeholder:text-sm"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="confirmationPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label htmlFor="confirmationPassword">
-                        Confirm Password
-                      </Label>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          id="confirmationPassword"
-                          type="password"
-                          placeholder="Confirm your password"
-                          className="placeholder:text-sm"
                         />
                       </FormControl>
                       <FormMessage />
@@ -123,19 +96,19 @@ export default function Signup() {
                 />
 
                 <Button type="submit" className="w-full">
-                  Sign Up
+                  Sign in
                 </Button>
               </form>
             </Form>
           </div>
           <div className="flex items-center justify-center">
             <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
+              You Don't have an account?{" "}
               <a
-                onClick={() => redirect("/auth/signin")}
+                onClick={() => router.push("/auth/signup")}
                 className="text-primary hover:underline cursor-pointer"
               >
-                Sign In
+                Sign Up
               </a>
             </p>
           </div>
