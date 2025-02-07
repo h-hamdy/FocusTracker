@@ -4,10 +4,37 @@ import { redirect } from "next/navigation";
 import { BarChart, Clock, Pause, Play } from "@geist-ui/icons";
 import { Settings } from "@geist-ui/icons";
 import { Progress } from "@/components/ui/progress";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [isActive, setIsActive] = useState(false);
+
+  const endDate = new Date("2025-04-25T23:59:59");
+
+  const calculateTimeLeft = () => {
+    const now = new Date();
+    const difference = endDate.getTime() - now.getTime();
+
+    if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / (1000 * 60)) % 60),
+      seconds: Math.floor((difference / 1000) % 60),
+    };
+  };
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br">
       <div className="max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 xl:px-32">
@@ -77,10 +104,18 @@ export default function Home() {
             <div className="font-semibold text-lg pb-[70px]">
               Project Deadline
             </div>
-            <div className="font-extrabold text-6xl">79 : 12 : 60</div>
+            <div className="font-extrabold text-[45px]">
+              {String(timeLeft.days).padStart(2, "0")} :{" "}
+              {String(timeLeft.hours).padStart(2, "0")} :{" "}
+              {String(timeLeft.minutes).padStart(2, "0")} :{" "}
+              {String(timeLeft.seconds).padStart(2, "0")}
+            </div>
             <div className="flex items-center absolute bottom-6 space-x-2 text-sm text-gray-500">
               <Clock className="h-4 w-4" />
-              <p>From June 1, 2023 to July 15, 2023</p>
+              <p>
+                From {new Date().toLocaleDateString("en-US")} to{" "}
+                {endDate.toLocaleDateString("en-US")}
+              </p>
             </div>
           </div>
         </main>
