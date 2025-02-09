@@ -20,5 +20,11 @@ model User {
 	username String @unique
 	hash String
 	endDate  DateTime? @default(now())
+
+
+	pomodoroTime      Int?    @default(25) 
+  	shortBreakTime    Int?    @default(5)
+  	longBreakTime     Int?    @default(15)  
+  	longBreakInterval Int?    @default(4)
 }
 

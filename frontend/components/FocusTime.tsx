@@ -4,18 +4,45 @@ import React, { useEffect, useRef, useState } from "react";
 import { Coffee, Pause, Play, RotateCcw } from "@geist-ui/icons";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
 
-const POMODORO_TIME = 1 * 10;
-const SHORT_BREAK_TIME = 1 * 10;
-const LONG_BREAK_TIME = 1 * 10;
-const LONG_BREAK_INTERVAL = 4;
-
+const POMODORO_TIMER = 25 * 60;
 export default function FocusTime() {
-  const [timeLeft, setTimeLeft] = useState(POMODORO_TIME);
-  const [isActive, setIsActive] = useState(false);
+	
+	const [timeLeft, setTimeLeft] = useState(POMODORO_TIMER);
+	const [isActive, setIsActive] = useState(false);
   const [currentMode, setCurrentMode] = useState<
     "work" | "shortBreak" | "longBreak"
-  >("work");
+	>("work");
+
+	
+  const [pomodoroTime, setPomodoroTime] = useState(0);
+const [shortBreakTime, setShortBreakTime] = useState(0);
+const [longBreakTime, setLongBreakTime] = useState(0);
+const [longBreakInterval, setLongBreakInterval] = useState(4);
+
+useEffect(() => {
+	const fetchPomodoroSettings = async () => {
+	  try {
+		const response = await axios.get("http://localhost:3002/user/GetPomodoros", {
+		  withCredentials: true,
+		});
+  
+		if (response.data) {
+		  setPomodoroTime((response.data.pomodoroTime ?? 25) * 60);
+		  setShortBreakTime((response.data.shortBreakTime ?? 5) * 60);
+		  setLongBreakTime((response.data.longBreakTime ?? 15) * 60);
+		  setLongBreakInterval(response.data.longBreakInterval ?? 4);
+		  setTimeLeft((response.data.pomodoroTime ?? 25) * 60);
+		}
+	  } catch (error) {
+		console.error("Error fetching Pomodoro settings:", error);
+	  }
+	};
+  
+	fetchPomodoroSettings();
+  }, []);
+  
 
 
   const [sessions, setSessions] = useState(0);
@@ -25,16 +52,16 @@ export default function FocusTime() {
     if (timeLeft === 0) {
       if (currentMode === "work") {
         setSessions((prev) => prev + 1);
-        if (sessions > 0 && sessions % LONG_BREAK_INTERVAL === 0) {
+        if (sessions > 0 && sessions % longBreakInterval === 0) {
           setCurrentMode("longBreak");
-          setTimeLeft(LONG_BREAK_TIME);
+          setTimeLeft(longBreakTime);
         } else {
           setCurrentMode("shortBreak");
-          setTimeLeft(SHORT_BREAK_TIME);
+          setTimeLeft(shortBreakTime);
         }
       } else {
         setCurrentMode("work");
-        setTimeLeft(POMODORO_TIME);
+        setTimeLeft(pomodoroTime);
       }
       setIsActive(false);
     }
@@ -55,7 +82,7 @@ export default function FocusTime() {
     if (timerRef.current) clearInterval(timerRef.current);
     setIsActive(false);
     setCurrentMode("work");
-    setTimeLeft(POMODORO_TIME);
+    setTimeLeft(pomodoroTime);
     setSessions(0);
   };
 
@@ -70,11 +97,11 @@ export default function FocusTime() {
   const getProgress = () => {
     switch (currentMode) {
       case "work":
-        return ((POMODORO_TIME - timeLeft) / POMODORO_TIME) * 100;
+        return ((pomodoroTime - timeLeft) / pomodoroTime) * 100;
       case "shortBreak":
-        return ((SHORT_BREAK_TIME - timeLeft) / SHORT_BREAK_TIME) * 100;
+        return ((shortBreakTime - timeLeft) / shortBreakTime) * 100;
       case "longBreak":
-        return ((LONG_BREAK_TIME - timeLeft) / LONG_BREAK_TIME) * 100;
+        return ((longBreakTime - timeLeft) / longBreakTime) * 100;
     }
   };
 

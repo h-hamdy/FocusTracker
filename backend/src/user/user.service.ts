@@ -26,6 +26,48 @@ export class UserService {
 	return user.endDate;
   }
 
+  async getPomodoros(userId: number) {
+	const user = await this.prisma.user.findUnique({
+	  where: { id: userId },
+	  select: {
+		pomodoroTime: true,
+		shortBreakTime: true,
+		longBreakTime: true,
+		longBreakInterval: true
+	  }
+	});
+  
+	if (!user) {
+	  throw new Error("User not found");
+	}
+  
+	return user;
+  }
+
+
+
+  async updatePomodoroTime(userId: number, time: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { pomodoroTime: time },
+    });
+  }
+
+  async updateShortBreakTime(userId: number, time: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { shortBreakTime: time },
+    });
+  }
+
+  async updateLongBreakTime(userId: number, time: number) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { longBreakTime: time },
+    });
+  }
+
+
   async getUser(id: number) {
 	const user = await this.prisma.user.findUnique({
 	  where: { id: id },

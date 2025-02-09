@@ -16,12 +16,10 @@ export class AuthService {
       where: { username: dto.username },
     });
 
-    // If a user with the provided username already exists, throw an error
     if (existingUser) {
       throw new UnauthorizedException('User with this email already exists.');
     }
 
-    // generate the hash password
     if (dto.password != dto.confirmationPassword)
       throw new UnauthorizedException('Passwords do not match.');
 

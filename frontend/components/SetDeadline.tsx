@@ -14,33 +14,32 @@ import axios from "axios";
 
 export default function SetDeadline() {
   const [date, setDate] = useState<Date>();
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const setDeadline = async (endDate: string) => {
+
+  const setDeadline = async () => {
+    if (!date) return
+
+    setIsSubmitting(true)
     try {
-      const response = await axios.post(
+      const endDate = date.toISOString()
+      await axios.post(
         "http://localhost:3002/user/setDeadline",
-        { endDate: endDate },
-        { withCredentials: true }
-      );
-      console.log("Deadline set successfully", response.data);
+        { endDate },
+        { withCredentials: true },
+      )
     } catch (error) {
-      console.error("Error setting deadline:", error);
+    } finally {
+      setIsSubmitting(false)
     }
-  };
-
-  useEffect(() => {
-    if (date) {
-      const endDate = date.toISOString();
-      console.log("endDate after change = " + endDate);
-      setDeadline(endDate);
-    }
-  }, [date]);
+  }
 
   return (
     <div className="flex flex-col ">
       <div className="text-lg flex items-center justify-center font-semibold pb-5">
         Set your Deadline Date
       </div>
+			<div className="flex gap-2">
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -54,7 +53,8 @@ export default function SetDeadline() {
             {date ? format(date, "PPP") : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="center">
+        <PopoverContent className="">
+
           <Calendar
             mode="single"
             selected={date}
@@ -63,6 +63,10 @@ export default function SetDeadline() {
           />
         </PopoverContent>
       </Popover>
+	  <Button onClick={setDeadline} className="w-full" type="submit" disabled={!date || isSubmitting}>
+          {isSubmitting ? "Setting..." : "Set Your Deadline"}
+        </Button>
+			</div>
     </div>
   );
 }
