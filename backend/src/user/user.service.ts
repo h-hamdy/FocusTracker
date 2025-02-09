@@ -19,7 +19,6 @@ export class UserService {
 	  select: { endDate: true },
 	});
 
-  
 	if (!user) {
 	  throw new NotFoundException('User not found');
 	}

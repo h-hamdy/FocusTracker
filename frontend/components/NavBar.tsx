@@ -1,15 +1,47 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { BarChart } from "@geist-ui/icons";
 import { Settings } from "@geist-ui/icons";
 import { usePathname } from "next/navigation";
+import axios from "axios";
 
 export default function NavBar() {
   const pathname = usePathname();
-  const [loggedIn, _setIsLogged] = useState(false);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true)
+  const router = useRouter();
+
+	useEffect(() => {
+		const checkAuthentication = async () => {
+		  try {
+			await axios.get("http://localhost:3002/user/isAuthenticated", {
+			  withCredentials: true,
+			});
+			setIsAuthenticated(true);
+		  } catch (error) {
+			setIsAuthenticated(false);
+		  } finally {
+			setLoading(false);
+		  }
+		};
+	
+		checkAuthentication();
+	  }, []);
+	
+	  useEffect(() => {
+		if (!loading && !isAuthenticated) {
+		  router.push("/auth/signup");
+		}
+	  }, [isAuthenticated, loading, router]);
+	
+	  if (loading) {
+		return <div>Loading...</div>;
+	  }
+
 
   return (
     <nav className="py-4">
@@ -42,7 +74,7 @@ export default function NavBar() {
             <Settings size={16} />
             Settings
           </Button>
-          {loggedIn ? (
+          {isAuthenticated ? (
             <img
               className=" w-[40px] h-[40px] object-center rounded-full"
               src="/profile.png"

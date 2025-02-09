@@ -59,7 +59,7 @@ export default function ProjectDeadline() {
   return (
     <div className="md:w-1/2 w-full relative flex flex-col items-center h-[300px] p-5 rounded-xl border shadow-sm">
       <div className="font-semibold text-lg pb-[70px]">Project Deadline</div>
-      <div className="font-extrabold text-[45px]">
+      <div className="font-extrabold text-[40px]">
         {String(timeLeft?.days).padStart(2, "0")} :{" "}
         {String(timeLeft?.hours).padStart(2, "0")} :{" "}
         {String(timeLeft?.minutes).padStart(2, "0")} :{" "}

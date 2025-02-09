@@ -17,6 +17,12 @@ import { request } from 'express';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get('/isAuthenticated')
+  @UseGuards(JwtAuthGuard)
+  isAuthenticated() {
+    return true;
+  }
+
   @Post('/SetDeadline')
   @UseGuards(JwtAuthGuard)
   async setDeadline(@Body() data: SetDeadlineDto, @Req() request: Request) {

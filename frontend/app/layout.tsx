@@ -5,16 +5,17 @@ import { usePathname } from "next/navigation";
 
 
 
-export default function RootLayout({
 
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-  
-}>) {
+export default function RootLayout({
+	
+	children,
+	}: Readonly<{
+		children: React.ReactNode;
+		
+		}>) {
+			
 	const pathname = usePathname();
 	const hideNavBar = pathname === "/auth/signin" || pathname === "/auth/signup";
-
 
   return (
     <html lang="en">
@@ -23,7 +24,7 @@ export default function RootLayout({
 		 <div className="min-h-screen w-full bg-gradient-to-br">
 		 <div className="max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 xl:px-32">
 		 {!hideNavBar && <NavBar />}
-        {children}
+		 {children}
 		</div>
 		</div>
       </body>
