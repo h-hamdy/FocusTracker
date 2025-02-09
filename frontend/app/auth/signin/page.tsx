@@ -33,7 +33,7 @@ export default function Signin() {
   const onSubmit = async (values: z.infer<typeof signinSchema>) => {
     console.log(values);
     try {
-      await axios.post("http://localhost:3001/auth/signin", values, {
+      await axios.post("http://localhost:3002/auth/signin", values, {
         withCredentials: true,
       });
       router.push("/");

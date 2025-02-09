@@ -36,7 +36,7 @@ export default function Signup() {
 
   const onSubmit = async (values: z.infer<typeof signupSchema>) => {
     try {
-      await axios.post("http://localhost:3001/auth/signup", values, {
+      await axios.post("http://localhost:3002/auth/signup", values, {
         withCredentials: true,
       });
       router.push("/auth/signin");

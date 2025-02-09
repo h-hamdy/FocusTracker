@@ -49,6 +49,8 @@ export class AuthService {
       where: { username: dto.username },
     });
 
+	console.log(user)
+
     if (!user) {
       throw new UnauthorizedException('Invalid username or password');
     }

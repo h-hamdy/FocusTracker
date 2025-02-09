@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 
 export default function NavBar() {
   const pathname = usePathname();
-  const [loggedIn, _setIsLogged] = useState(true);
+  const [loggedIn, _setIsLogged] = useState(false);
 
   return (
     <nav className="py-4">
@@ -45,7 +45,7 @@ export default function NavBar() {
           {loggedIn ? (
             <img
               className=" w-[40px] h-[40px] object-center rounded-full"
-              src="/houssam_dvprogram.jpg"
+              src="/profile.png"
             ></img>
           ) : (
             <Button

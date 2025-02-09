@@ -18,6 +18,7 @@ export class AuthController {
 		console.log(token);
 		(response as any).cookie('jwt', token, {
 			httpOnly: true,
+			// secure: false, 
 		});
 
 		return { message: 'Login successful' };
